@@ -69,7 +69,7 @@ module "instance_template" {
     scopes = ["cloud-platform"]
   }
 
-  labels {
+  labels = {
     cluster-name = kubernetes
   }
 
