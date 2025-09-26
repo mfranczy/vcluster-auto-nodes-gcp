@@ -65,8 +65,7 @@ module "instance_template" {
   disk_type    = "pd-standard"
 
   service_account = {
-    # Use default compute service account
-    email  = "${data.google_project.project.number}-compute@developer.gserviceaccount.com"
+    email  = local.service_account_email
     scopes = ["cloud-platform"]
   }
 
