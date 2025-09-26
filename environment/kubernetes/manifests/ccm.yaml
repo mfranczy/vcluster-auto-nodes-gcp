@@ -122,6 +122,8 @@ spec:
         app.kubernetes.io/name: cloud-controller-manager
         tier: control-plane
     spec:
+      hostNetwork: true
+      dnsPolicy: Default
       serviceAccountName: cloud-controller-manager
       priorityClassName: system-cluster-critical
       tolerations:
