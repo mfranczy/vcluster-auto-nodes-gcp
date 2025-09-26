@@ -69,6 +69,10 @@ module "instance_template" {
     scopes = ["cloud-platform"]
   }
 
+  labels {
+    cluster-name = kubernetes
+  }
+
   metadata = {
     user-data = var.vcluster.userData
   }

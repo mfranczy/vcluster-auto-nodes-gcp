@@ -1,6 +1,6 @@
 locals {
   manifest_files = [
-   
+    "${path.module}/manifests/ccm.yaml"
   ]
 }
 
