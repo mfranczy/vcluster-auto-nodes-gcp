@@ -68,12 +68,13 @@ module "instance_template" {
     email  = local.service_account_email
     scopes = ["cloud-platform"]
   }
-
-  labels {
-    cluster-name = kubernetes
+  
+  labels = {
+    cluster-name = "kubernetes"
   }
 
   metadata = {
+    cluster-name = kubernetes
     user-data = var.vcluster.userData
   }
 
