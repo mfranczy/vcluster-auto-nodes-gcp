@@ -70,11 +70,11 @@ module "instance_template" {
   }
 
   labels = {
-    cluster-name = kubernetes
+    cluster-name = "kubernetes"
   }
 
   metadata = {
-    cluster-name = kubernetes
+    cluster-name = "kubernetes"
     user-data = var.vcluster.userData
   }
 
