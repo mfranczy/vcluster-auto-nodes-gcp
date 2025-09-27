@@ -659,7 +659,6 @@ spec:
         - --enable-data-cache
         - --enable-multitenancy
         - --node-name=$(KUBE_NODE_NAME)
-        - --labels=${disk_labels}
         env:
         - name: KUBE_NODE_NAME
           valueFrom:
