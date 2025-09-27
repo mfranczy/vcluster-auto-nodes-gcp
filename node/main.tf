@@ -54,7 +54,7 @@ module "instance_template" {
   network            = local.network_name
   subnetwork         = local.subnet_name
   subnetwork_project = local.project
-  tags               = ["allow-iap-ssh"] # for IAP SSH access
+  tags               = ["allow-iap-ssh", local.vcluster_name] # for IAP SSH access
 
   machine_type = local.instance_type
 
@@ -69,8 +69,6 @@ module "instance_template" {
     email  = local.service_account_email
     scopes = ["cloud-platform"]
   }
-
-  tags = [local.vcluster_name]
 
   metadata = {
     user-data = var.vcluster.userData
