@@ -8,3 +8,9 @@ variable "template_vars" {
   type        = map(string)
   default     = {}
 }
+
+variable "computed_fields" {
+  description = "Computed fields"
+  type        = list(string)
+  default     = []
+}

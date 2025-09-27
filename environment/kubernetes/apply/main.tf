@@ -21,4 +21,6 @@ resource "kubernetes_manifest" "apply" {
     name            = "terraform"
     force_conflicts = true
   }
+
+  computed_fields = var.computed_fields
 }
