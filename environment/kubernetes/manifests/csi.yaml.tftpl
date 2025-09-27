@@ -592,8 +592,6 @@ spec:
       - args:
         - --v=5
         - --endpoint=unix:/csi/csi.sock
-        - --supports-dynamic-iops-provisioning=hyperdisk-balanced,hyperdisk-extreme
-        - --supports-dynamic-throughput-provisioning=hyperdisk-balanced,hyperdisk-throughput,hyperdisk-ml
         command:
         - /gce-pd-csi-driver
         image: registry.k8s.io/cloud-provider-gcp/gcp-compute-persistent-disk-csi-driver:v1.13.9

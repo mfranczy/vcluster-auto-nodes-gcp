@@ -15,7 +15,9 @@ resource "google_project_iam_member" "ccm_csi" {
     "roles/compute.networkAdmin",
     "roles/compute.instanceAdmin.v1",
     "roles/compute.storageAdmin",
-    "roles/compute.securityAdmin"
+    "roles/compute.securityAdmin",
+
+    "roles/iam.serviceAccountUser" # role to use it
   ])
 
   project = local.project
