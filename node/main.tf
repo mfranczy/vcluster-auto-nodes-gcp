@@ -32,6 +32,7 @@ module "private_instance" {
   labels = {
     vcluster  = local.vcluster_name
     namespace = local.vcluster_namespace
+    cluster-name = local.vcluster_name
   }
 }
 
@@ -67,10 +68,6 @@ module "instance_template" {
   service_account = {
     email  = local.service_account_email
     scopes = ["cloud-platform"]
-  }
-
-  labels = {
-    cluster-name = local.vcluster_name
   }
 
   metadata = {
