@@ -18,7 +18,7 @@ resource "kubernetes_manifest" "apply" {
   wait { rollout = false }
 
   field_manager {
-    name            = "tf-ssa"
+    name            = "terraform"
     force_conflicts = true
   }
 }
