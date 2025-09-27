@@ -656,9 +656,6 @@ spec:
         - --v=5
         - --endpoint=unix:/csi/csi.sock
         - --run-controller-service=false
-        - --enable-data-cache
-        - --enable-multitenancy
-        - --node-name=$(KUBE_NODE_NAME)
         env:
         - name: KUBE_NODE_NAME
           valueFrom:
@@ -743,6 +740,6 @@ spec:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: csi-gce-pd-with-resource-tags
+  name: csi-gce-pd
 provisioner: pd.csi.storage.gke.io
 volumeBindingMode: WaitForFirstConsumer
