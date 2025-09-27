@@ -7,24 +7,6 @@ metadata:
   labels:
     app.kubernetes.io/name: cloud-controller-manager
 ---
-# Only needed if you still use ConfigMap-based leader election in kube-system.
-# Most clusters use coordination.k8s.io Leases (covered in ClusterRole below).
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: system::leader-locking-cloud-controller-manager
-  namespace: kube-system
-  labels:
-    app.kubernetes.io/name: cloud-controller-manager
-rules:
-  - apiGroups: [""]
-    resources: ["configmaps"]
-    verbs: ["get", "update", "create", "watch"]
-  - apiGroups: [""]
-    resourceNames: ["cloud-controller-manager"]
-    resources: ["configmaps"]
-    verbs: ["get", "update"]
----
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -32,29 +14,35 @@ metadata:
   labels:
     app.kubernetes.io/name: cloud-controller-manager
 rules:
-  - apiGroups: ["", "events.k8s.io"]
+  - apiGroups: [""]
     resources: ["events"]
     verbs: ["create", "patch", "update"]
-  - apiGroups: ["coordination.k8s.io"]
-    resources: ["leases"]
-    verbs: ["create", "get", "list", "watch", "update", "patch"]
-  - apiGroups: [""]
-    resources: ["endpoints", "serviceaccounts"]
-    verbs: ["create", "get", "update", "patch"]
   - apiGroups: [""]
     resources: ["nodes"]
-    verbs: ["get", "list", "watch", "update", "patch"]
+    verbs: ["*"]
   - apiGroups: [""]
     resources: ["nodes/status"]
-    verbs: ["patch", "update"]
+    verbs: ["patch"]
   - apiGroups: [""]
-    resources: ["namespaces"]
-    verbs: ["get", "list", "watch"]
+    resources: ["services"]
+    verbs: ["list", "patch", "update", "watch"]
   - apiGroups: [""]
-    resources: ["secrets"]
-    verbs: ["create", "delete", "get", "update", "patch"]
-  - apiGroups: ["authentication.k8s.io"]
-    resources: ["tokenreviews"]
+    resources: ["services/status"]
+    verbs: ["list", "patch", "update", "watch"]
+  - apiGroups: [""]
+    resources: ["serviceaccounts"]
+    verbs: ["create", "get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "update", "watch"]
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["create", "get", "list", "watch", "update"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["create", "get", "list", "watch", "update"]
+  - apiGroups: [""]
+    resources: ["serviceaccounts/token"]
     verbs: ["create"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -68,22 +56,6 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: extension-apiserver-authentication-reader
-subjects:
-  - kind: ServiceAccount
-    name: cloud-controller-manager
-    namespace: kube-system
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: system::leader-locking-cloud-controller-manager
-  namespace: kube-system
-  labels:
-    app.kubernetes.io/name: cloud-controller-manager
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: system::leader-locking-cloud-controller-manager
 subjects:
   - kind: ServiceAccount
     name: cloud-controller-manager
@@ -107,19 +79,19 @@ subjects:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cloud-controller-manager
+  name: gcp-cloud-controller-manager
   namespace: kube-system
   labels:
-    app.kubernetes.io/name: cloud-controller-manager
+    app.kubernetes.io/name: gcp-cloud-controller-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: cloud-controller-manager
+      app.kubernetes.io/name: gcp-cloud-controller-manager
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: cloud-controller-manager
+        app.kubernetes.io/name: gcp-cloud-controller-manager
         tier: control-plane
     spec:
       hostNetwork: true
@@ -144,9 +116,12 @@ spec:
           effect: NoExecute
       containers:
         - name: cloud-controller-manager
-          image: k8scloudprovidergcp/cloud-controller-manager:v30.1.0
           imagePullPolicy: IfNotPresent
+          image: docker.io/mfranczy/cloud-controller-manager:v34.0.0
+          command:
+          - /cloud-controller-manager
           args:
+            - --v=2
             - --cloud-provider=gce
             - --use-service-account-credentials=false
             - --configure-cloud-routes=false
