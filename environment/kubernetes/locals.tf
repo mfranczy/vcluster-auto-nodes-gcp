@@ -1,3 +1,3 @@
 locals {
-  vcluster_name = var.vcluster.instance.metadata.name
+  vcluster_name = nonsensitive(var.vcluster.instance.metadata.name)
 }
