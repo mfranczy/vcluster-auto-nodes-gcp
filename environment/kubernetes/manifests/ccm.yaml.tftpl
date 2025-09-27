@@ -44,6 +44,9 @@ rules:
   - apiGroups: [""]
     resources: ["serviceaccounts/token"]
     verbs: ["create"]
+  - apiGroups: [""]
+    resources: ["configmaps"]
+    verbs: ["*"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -76,22 +79,34 @@ subjects:
     name: cloud-controller-manager
     namespace: kube-system
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gcp-cloud-config
+  namespace: kube-system
+data:
+  cloud-config: |
+    [Global]
+    node-tags = ${vcluster_name}
+    network-name = ${network_name}
+    subnetwork-name = ${subnet_name}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: gcp-cloud-controller-manager
+  name: cloud-controller-manager
   namespace: kube-system
   labels:
-    app.kubernetes.io/name: gcp-cloud-controller-manager
+    app.kubernetes.io/name: cloud-controller-manager
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/name: gcp-cloud-controller-manager
+      app.kubernetes.io/name: cloud-controller-manager
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: gcp-cloud-controller-manager
+        app.kubernetes.io/name: cloud-controller-manager
         tier: control-plane
     spec:
       hostNetwork: true
@@ -127,7 +142,8 @@ spec:
             - --configure-cloud-routes=false
             - --controllers=*,-node-ipam-controller
             - --leader-elect-resource-lock=leases
-            - --cluster-name=${cluster_name}
+            - --cluster-name=${vcluster_name}
+            - --cloud-config=/etc/kubernetes/cloud-config
           livenessProbe:
             httpGet:
               scheme: HTTPS
@@ -140,3 +156,14 @@ spec:
           resources:
             requests:
               cpu: "200m"
+          volumeMounts:
+            - name: cloud-config
+              mountPath: /etc/kubernetes
+              readOnly: true
+      volumes:
+        - name: cloud-config
+          configMap:
+            name: gcp-cloud-config
+            items:
+              - key: cloud-config
+                path: cloud-config
