@@ -1,6 +1,6 @@
 # --- Service Account ---
 resource "google_service_account" "ccm_csi" {
-  project      = local.project   # <-- same project ID
+  project      = local.project
   account_id   = format("%s-ccm-csi", local.vcluster_name)
   display_name = format("CCM/CSI role for %s", local.vcluster_name)
   description  = "Used by Kubernetes nodes (IMDS tokens) for CCM/CSI"
@@ -14,7 +14,7 @@ resource "google_project_iam_member" "ccm_csi" {
     "roles/compute.loadBalancerAdmin",
     "roles/compute.networkAdmin",
     "roles/compute.instanceAdmin.v1",
-    "roles/compute.storageAdmin" # for PD CSI driver
+    "roles/compute.storageAdmin"
   ])
 
   project = local.project

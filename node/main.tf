@@ -29,8 +29,6 @@ module "private_instance" {
   # Will use NAT
   access_config = []
 
-  tags = [local.vcluster_name]
-
   labels = {
     vcluster  = local.vcluster_name
     namespace = local.vcluster_namespace
@@ -72,8 +70,9 @@ module "instance_template" {
     scopes = ["cloud-platform"]
   }
 
+  tags = [local.vcluster_name]
+
   metadata = {
-    cluster-name = local.vcluster_name
     user-data = var.vcluster.userData
   }
 
