@@ -29,6 +29,8 @@ module "private_instance" {
   # Will use NAT
   access_config = []
 
+  tags = [local.vcluster_name]
+
   labels = {
     vcluster  = local.vcluster_name
     namespace = local.vcluster_namespace
