@@ -117,7 +117,7 @@ spec:
       containers:
         - name: cloud-controller-manager
           imagePullPolicy: IfNotPresent
-          image: docker.io/mfranczy/cloud-controller-manager:v34.0.0
+          image: ${image}
           command:
           - /cloud-controller-manager
           args:
@@ -125,6 +125,9 @@ spec:
             - --cloud-provider=gce
             - --use-service-account-credentials=false
             - --configure-cloud-routes=false
+            - --controllers=*,-node-ipam-controller
+            - --leader-elect-resource-lock=leases
+            - --cluster-name=${cluster_name}
           livenessProbe:
             httpGet:
               scheme: HTTPS

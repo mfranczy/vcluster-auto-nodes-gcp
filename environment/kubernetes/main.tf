@@ -1,15 +1,18 @@
-locals {
-  manifest_files = [
-    "${path.module}/manifests/ccm.yaml"
-  ]
+##########
+# CCM 
+#########
+
+module "kubernetes_apply" {
+  source        = "./apply"
+
+  manifest_file = "${path.module}/ccm.yaml.tftpl"
+  template_vars = {
+    cluster_name = local.vcluster_name
+    image        = "docker.io/mfranczy/cloud-controller-manager:v34.0.0"
+  }
 }
 
-# Preserve order
-locals {
-  files_indexed = { for i, f in local.manifest_files : i => f }
-}
-module "manifests_ordered" {
-  source        = "./apply"
-  for_each      = local.files_indexed
-  manifest_file = each.value
-}
+##########
+# CSI
+##########
+
