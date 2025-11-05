@@ -1,10 +1,10 @@
 output "network_name" {
-  value     = module.vpc[local.project_region_key].network_name
+  value     = module.vpc.network_name
   sensitive = true
 }
 
 output "subnet_name" {
-  value     = module.vpc[local.project_region_key].subnets["${local.region}/${local.private_subnet_name}"].name
+  value     = module.vpc.subnets["${local.region}/${local.private_subnet_name}"].name
   sensitive = true
 }
 

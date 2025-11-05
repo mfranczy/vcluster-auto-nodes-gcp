@@ -21,8 +21,6 @@ data "google_compute_zones" "available" {
 }
 
 module "vpc" {
-  for_each = { (local.project_region_key) = true }
-
   source  = "terraform-google-modules/network/google"
   version = "~> 12.0.0"
 
@@ -58,5 +56,7 @@ module "cloud_nat" {
   router                             = format("vcluster-router-%s", local.random_id)
   create_router                      = true
   source_subnetwork_ip_ranges_to_nat = "ALL_SUBNETWORKS_ALL_IP_RANGES"
-  network                            = module.vpc[local.project_region_key].network_self_link
+  network                            = module.vpc.network_self_link
+
+  depends_on = [module.vpc]
 }

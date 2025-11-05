@@ -61,7 +61,7 @@ resource "google_compute_firewall" "rules" {
 
   project     = local.project
   name        = format("%s-%s", each.key, local.random_id)
-  network     = module.vpc[local.project_region_key].network_self_link
+  network     = module.vpc.network_self_link
   description = each.value.description
   direction   = each.value.direction
 
@@ -75,4 +75,6 @@ resource "google_compute_firewall" "rules" {
       ports    = length(allow.value.ports) > 0 ? allow.value.ports : null
     }
   }
+
+  depends_on = [module.vpc]
 }
